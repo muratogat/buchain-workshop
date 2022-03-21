@@ -52,9 +52,9 @@ describe("Setup", function () {
     });
 
     it("Should deploy the Broker contract", async () => {
-        let address = await deployBroker(shareAddress, sharePrice, currencyAddress);
-        console.log("      Broker contract successfully deployed to:", address);
-        expect(address).to.not.be.undefined;
+        brokerAddress = await deployBroker(shareAddress, sharePrice, currencyAddress);
+        console.log("      Broker contract successfully deployed to:", brokerAddress);
+        expect(brokerAddress).to.not.be.undefined;
     });
 });
 

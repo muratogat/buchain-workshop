@@ -35,11 +35,11 @@ contract Broker is IBroker, Ownable {
 
     }
 
-    function getPriceInETH() external view returns (uint256) {
+    function getPriceInETH(uint256 _amountShares) external returns (uint256) {
 
     }
 
-    function getPriceInToken(address _tokenAddress) external view returns (uint256) {
+    function getPriceInToken(uint256 _amountShares, bytes memory path) external returns (uint256) {
 
     }
 

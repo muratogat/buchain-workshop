@@ -30,12 +30,12 @@ interface IBroker {
     /**
      * @dev Returns the share price for payments that will be done in ETH.
      */
-    function getPriceInETH() external view returns (uint256);
+    function getPriceInETH(uint256 _amountShares) external returns (uint256);
 
     /**
      * @dev Returns the share price for payments that will be done in any currency that can be converted to the base currency over Uniswap.
      */
-    function getPriceInToken(address _tokenAddress) external view returns (uint256);
+    function getPriceInToken(uint256 _amountShares, bytes memory path) external returns (uint256);
 
     /**
      * @dev Executes a trade for Shares <-> BaseCurrency at the current price, 
