@@ -3,8 +3,8 @@ module.exports = {
   shareSymbol: "BUCS",
   shareName: "BUChain Test Shares",
   shareTerms: "buchain.org",
-  sharePrice: "100000000000000000000",
-  daiAddress: "0x6b175474e89094c44da98b954eedeac495271d0f",
+  sharePrice: "10000000000000000000", /* 10 DAI */
+  daiAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
   daiBalanceSlot: 2,
 
 

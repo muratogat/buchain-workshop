@@ -31,8 +31,6 @@
 
 It is possible to check and ensure these conditions in the UI that would be built on top of the Broker contract. For example, the user may be asked to give the necessary allowance before being allowed to call buying methods. Alternative methods also to be discussed in the workshop.
 
-<br>
-
 # Setup
 
 1. npm is package manager used in the project setup. Download and install it if it's not already found in your system.
