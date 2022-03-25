@@ -24,3 +24,19 @@
 - Users should be able to sell back Shares to the Broker, receiving DAI in return.
 - Users should be able to sell back Shares to the Broker, receiving ETH in return.
 
+## Assumptions
+
+- When buying with DAI (or other ERC20 token), it is assumed that a prior "Allowance" was given to the Broker contract to move DAI of the Buyer address.
+- When selling Shares, it is assumed that a prior "Allowance" was given to the Broker to move Shares of the Seller address.
+
+It is possible to check and ensure these conditions in the UI that would be built on top of the Broker contract. For example, the user may be asked to give the necessary allowance before being allowed to call buying methods. Alternative methods also to be discussed in the workshop.
+
+<br>
+
+# Setup
+
+1. npm is package manager used in the project setup. Download and install it if it's not already found in your system.
+2. Clone the repo to a local folder
+3. Run "npm install" in that folder, which should successfully download and install all dependencies in package.json, such as hardhat, ethers, chai, etc.
+4. Run "npx hardhat compile" which should be able to successfully compile existing contracts in /contracts folder
+5. Running "npx hardhat test" should run tests in the /test folder in alphabetical order. 
