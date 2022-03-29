@@ -20,23 +20,23 @@ contract Broker is IBroker, Ownable {
     }
     
     function getShares() external view returns (IERC20) {
-
+        return shares;
     }
 
     function getBaseCurrency() external view returns (IERC20) {
-
+        return currency;
     }
 
     function getPriceInBaseCurrency() external view returns (uint256) {
-
+        return price;
     }
 
     function setPriceInBaseCurrency(uint256 _price) external onlyOwner {
-
+        price = _price;
     }
 
     function getPriceInETH(uint256 _amountShares) external returns (uint256) {
-
+        
     }
 
     function getPriceInToken(uint256 _amountShares, bytes memory path) external returns (uint256) {
