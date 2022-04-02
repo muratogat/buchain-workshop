@@ -54,6 +54,7 @@ contract Broker is IBroker, Ownable {
         uint256 amountCurrency;
         amountCurrency = _amountShares * price;
 
+        //Take DAI from buyer
         currency.transferFrom(msg.sender, address(this), amountCurrency);
         userToPaid[msg.sender] += amountCurrency;
         userToDeposit[msg.sender] += amountCurrency;
