@@ -13,7 +13,12 @@ contract Broker is IBroker, Ownable {
 
     IERC20 public immutable currency;
     IERC20 public immutable shares;
+    mapping (address => uint256) private userToPaid;
+    mapping (address=>uint256) private userToDeposit;
+    mapping (address=>uint256) private userToSharesCount;
+
     uint256 private price;
+
 
     constructor(IERC20 _shares, uint256 _price, IERC20 _currency, address _owner) Ownable(_owner) {
         shares = _shares;
@@ -46,7 +51,17 @@ contract Broker is IBroker, Ownable {
     }
 
     function buyWithBaseCurrency(uint256 _amountShares) external {
+        uint256 amountCurrency;
+        amountCurrency = _amountShares * price;
 
+        currency.transferFrom(msg.sender, address(this), amountCurrency);
+        userToPaid[msg.sender] += amountCurrency;
+        userToDeposit[msg.sender] += amountCurrency;
+ 
+        require(userToPaid[msg.sender] == amountCurrency, "not equal deposit DAI");
+        shares.transfer(msg.sender, _amountShares);
+        userToPaid[msg.sender] -= amountCurrency;
+        userToSharesCount[msg.sender] += _amountShares;
     }
 
     function buyWithETH(uint256 _amountShares) external {
