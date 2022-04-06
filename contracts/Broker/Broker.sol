@@ -17,6 +17,10 @@ contract Broker is IBroker, Ownable {
     mapping (address=>uint256) private userToDeposit;
     mapping (address=>uint256) private userToSharesCount;
 
+    address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address public constant WETH9 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public constant router = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+
     uint256 private price;
 
 
@@ -43,11 +47,24 @@ contract Broker is IBroker, Ownable {
     }
 
     function getPriceInETH(uint256 _amountShares) external returns (uint256) {
-        
+        uint256 daiAmount = _amountShares * price;
+        address tokenIn = DAI;
+        address tokenOut = WETH9;
+        uint24 fee = 3000;
+        uint160 sqrtPriceLimitX96 = 0;
+
+        return IQuoter(0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6).quoteExactOutputSingle(
+            tokenIn,
+            tokenOut,
+            fee,
+            daiAmount,
+            sqrtPriceLimitX96
+        );
     }
 
     function getPriceInToken(uint256 _amountShares, bytes memory path) external returns (uint256) {
-
+        uint256 amountOut = _amountShares * price;
+        return IQuoter(0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6).quoteExactOutput(path, amountOut);
     }
 
     function buyWithBaseCurrency(uint256 _amountShares) external {
