@@ -50,7 +50,7 @@ interface IBroker {
             - Converting ETH to baseCurrency over Uniswap while receiving the payment
             - Transferring shares from the Broker to the buyer.
      */
-    function buyWithETH(uint256 _amountShares) external;
+    function buyWithETH(uint256 _amountShares) external payable;
 
     /**
      * @dev Executes a trade for Shares <-> Any Token at the current price, 
