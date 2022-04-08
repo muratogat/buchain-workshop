@@ -119,7 +119,6 @@ contract Broker is IBroker, Ownable {
         require(userToSharesCount[msg.sender] <= _amountShares);
         uint256 daiAmount = price * _amountShares;
         shares.transferFrom(msg.sender, address(this), _amountShares);
-        //add some req
         currency.transfer(msg.sender, daiAmount);
         userToSharesCount[msg.sender] -= _amountShares;
     }
