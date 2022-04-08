@@ -20,6 +20,7 @@ contract Broker is IBroker, Ownable {
     address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public constant WETH9 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public constant router = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+    address public constant quoter = 0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6;
 
     uint256 private price;
 
@@ -90,7 +91,13 @@ contract Broker is IBroker, Ownable {
     }
 
     function sellForBaseCurrency(uint256 _amountShares) external {
+        require(userToSharesCount[msg.sender] <= _amountShares);
+        uint256 daiAmount = price * _amountShares;
+        shares.transferFrom(msg.sender, address(this), _amountShares);
+        //add some req
 
+        currency.transfer(msg.sender, daiAmount);
+        userToSharesCount[msg.sender] -= _amountShares;
     }
 
     function sellForWETH(uint256 _amountShares) external {
