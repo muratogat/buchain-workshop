@@ -145,7 +145,11 @@ contract Broker is IBroker, Ownable {
     }
 
     function sellForWETH(uint256 _amountShares) external {
-        
+        uint256 daiAmount = price * _amountShares;
+        uint256 WETHAmount = this.getPriceInETH(_amountShares);
+        IERC20 WETH = IERC20(WETH9);
+        shares.transferFrom(msg.sender, address(this), _amountShares);
+        WETH.transfer(msg.sender, WETHAmount);
     }
 
     function withdrawShares(uint256 _amountShares, address _recipient) external onlyOwner {
