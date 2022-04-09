@@ -85,7 +85,7 @@ interface IBroker {
             This scenario would only be possible if some ETH was accidentally sent to the contract.
             The Broker normally does not receive any ETH. It converts incoming ETH to baseCurrency automatically during purchases.
      */
-    function withdrawETH(address _recipient) external;
+    function withdrawETH(address _recipient) external payable;
 
     /**
      * @dev Allows owner to withdraw any token from the Broker to any address

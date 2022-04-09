@@ -130,7 +130,7 @@ contract Broker is IBroker, Ownable {
         );
 
         uint256 amountIn = ISwapRouter(router).exactOutput(params);
-        
+
         require(amountIn >= this.getPriceInToken(_amountShares, path), "Not enough ethers to buy shares");
 
         token.transferFrom(msg.sender, address(this), _amountShares);
@@ -145,19 +145,21 @@ contract Broker is IBroker, Ownable {
     }
 
     function sellForWETH(uint256 _amountShares) external {
-
+        
     }
 
     function withdrawShares(uint256 _amountShares, address _recipient) external onlyOwner {
-
+        shares.transfer(_recipient, _amountShares);
     }
     
-    function withdrawETH(address _recipient) external onlyOwner {
-
+    function withdrawETH(address _recipient) external payable onlyOwner {
+        (bool sent, bytes memory data) = _recipient.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
     }
 
     function withdrawToken(address _token, address _recipient) external onlyOwner {
-
+        IERC20 token = IERC20(_token);
+        token.transfer(_recipient, address(this).balance);
     }
 
     receive() payable external {}
