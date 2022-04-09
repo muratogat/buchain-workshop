@@ -223,7 +223,6 @@ describe("Broker", function () {
     const brokerBalanceSharesBefore = await shares.balanceOf(brokerAddress);
 
     // Execute purchase and sell
-    
     await broker.connect(signer1).sellForBaseCurrency(amountShares);
     
     // Balances after
