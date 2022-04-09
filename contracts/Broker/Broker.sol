@@ -112,7 +112,29 @@ contract Broker is IBroker, Ownable {
     }
 
     function buyWithToken(uint256 _amountShares, address _tokenAddress) external {
+        IERC20 token = IERC20(_tokenAddress);
 
+        uint24 poolFee = 3000;
+        bytes memory path = abi.encodePacked(_tokenAddress, poolFee, DAI);
+        address recipient = msg.sender;
+        uint256 deadline = block.timestamp;
+        uint256 amountOut = _amountShares * price;
+        uint256 amountInMaximum = _amountShares * price;
+
+        ISwapRouter.ExactOutputParams memory params = ISwapRouter.ExactOutputParams(
+            path,
+            recipient,
+            deadline,
+            amountOut,
+            amountInMaximum
+        );
+
+        uint256 amountIn = ISwapRouter(router).exactOutput(params);
+        
+        require(amountIn >= this.getPriceInToken(_amountShares, path), "Not enough ethers to buy shares");
+
+        token.transferFrom(msg.sender, address(this), _amountShares);
+        shares.transfer(msg.sender, _amountShares);
     }
 
     function sellForBaseCurrency(uint256 _amountShares) external {

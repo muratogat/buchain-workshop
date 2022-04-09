@@ -222,7 +222,6 @@ describe("Broker", function () {
     const brokerBalanceDaiBefore = await DAI.balanceOf(brokerAddress);
     const brokerBalanceSharesBefore = await shares.balanceOf(brokerAddress);
 
-
     // Execute purchase and sell
     
     await broker.connect(signer1).sellForBaseCurrency(amountShares);
