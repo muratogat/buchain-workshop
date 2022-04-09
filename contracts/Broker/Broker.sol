@@ -116,7 +116,6 @@ contract Broker is IBroker, Ownable {
     }
 
     function sellForBaseCurrency(uint256 _amountShares) external {
-        require(userToSharesCount[msg.sender] <= _amountShares);
         uint256 daiAmount = price * _amountShares;
         shares.transferFrom(msg.sender, address(this), _amountShares);
         currency.transfer(msg.sender, daiAmount);

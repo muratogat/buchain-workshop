@@ -128,7 +128,7 @@ describe("Broker", function () {
     const signers = await ethers.getSigners();
     const DAI = await ethers.getContractAt("ERC20", currencyAddress);
     for (let i = 0; i < signers.length ; i++) {
-      await DAI.connect(signers[i]).approve(brokerAddress, ethers.utils.parseEther("10000"));
+      await DAI.connect(signers[i]).approve(brokerAddress, ethers.utils.parseEther("1000000"));
       const allowance = await DAI.allowance(signers[i].address, brokerAddress); 
       expect(allowance).to.not.be.equal(0);
     }
@@ -138,7 +138,7 @@ describe("Broker", function () {
     const signers = await ethers.getSigners();
     const SHARES = await ethers.getContractAt("Shares", currencyAddress);
     for (let i = 0; i < signers.length ; i++) {
-      await SHARES.connect(signers[i]).approve(brokerAddress, ethers.utils.parseEther("10000"));
+      await SHARES.connect(signers[i]).approve(brokerAddress, ethers.utils.parseEther("1000000"));
       const allowance = await SHARES.allowance(signers[i].address, brokerAddress); 
       expect(allowance).to.not.be.equal(0);
     }
@@ -204,7 +204,40 @@ describe("Broker", function () {
   });
 
   it("Should let users sell Shares against DAI", async () => {
+    const [deployer, owner, signer1] = await ethers.getSigners();
+    const DAI = await ethers.getContractAt("ERC20", currencyAddress);
+    const broker = await ethers.getContractAt("Broker", brokerAddress);
+    const shares = await ethers.getContractAt("Shares", shareAddress);
+    const amountShares = BigNumber.from("70");
+    const totalPrice = (await broker.getPriceInBaseCurrency()).mul(amountShares);
+
+    await DAI.connect(signer1).approve(brokerAddress, ethers.utils.parseEther("1000000"));
+    await shares.connect(signer1).approve(brokerAddress, ethers.utils.parseEther("1000000"));
+
+    await broker.connect(signer1).buyWithBaseCurrency(amountShares);
+
+    // Balances before
+    const signerBalanceDaiBefore = await DAI.balanceOf(signer1.address);
+    const signerBalanceSharesBefore = await shares.balanceOf(signer1.address);
+    const brokerBalanceDaiBefore = await DAI.balanceOf(brokerAddress);
+    const brokerBalanceSharesBefore = await shares.balanceOf(brokerAddress);
+
+
+    // Execute purchase and sell
     
+    await broker.connect(signer1).sellForBaseCurrency(amountShares);
+    
+    // Balances after
+    const signerBalanceDaiAfter = await DAI.balanceOf(signer1.address);
+    const signerBalanceSharesAfter = await shares.balanceOf(signer1.address);
+    const brokerBalanceDaiAfter = await DAI.balanceOf(brokerAddress);
+    const brokerBalanceSharesAfter = await shares.balanceOf(brokerAddress);
+    
+    // Check for sanity
+    expect(signerBalanceDaiBefore.add(totalPrice)).to.be.equal(signerBalanceDaiAfter);
+    expect(signerBalanceSharesBefore.sub(amountShares)).to.be.equal(signerBalanceSharesAfter);
+    expect(brokerBalanceDaiBefore.sub(totalPrice)).to.be.equal(brokerBalanceDaiAfter);
+    expect(brokerBalanceSharesBefore.add(amountShares)).to.be.equal(brokerBalanceSharesAfter);
   });
 
   it("Should let users sell Shares against ETH", async () => {
