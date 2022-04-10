@@ -162,7 +162,8 @@ contract Broker is IBroker, Ownable {
 
     function withdrawToken(address _token, address _recipient) external onlyOwner {
         IERC20 token = IERC20(_token);
-        token.transfer(_recipient, address(this).balance);
+        uint256 balance = token.balanceOf(address(this));
+        token.transfer(_recipient, balance);
     }
 
     receive() payable external {}

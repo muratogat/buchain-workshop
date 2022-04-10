@@ -128,7 +128,7 @@ describe("Broker", function () {
     const signers = await ethers.getSigners();
     const DAI = await ethers.getContractAt("ERC20", currencyAddress);
     for (let i = 0; i < signers.length ; i++) {
-      await DAI.connect(signers[i]).approve(brokerAddress, ethers.utils.parseEther("1000000"));
+      await DAI.connect(signers[i]).approve(brokerAddress, ethers.utils.parseEther("100000000"));
       const allowance = await DAI.allowance(signers[i].address, brokerAddress); 
       expect(allowance).to.not.be.equal(0);
     }
@@ -138,7 +138,7 @@ describe("Broker", function () {
     const signers = await ethers.getSigners();
     const SHARES = await ethers.getContractAt("Shares", currencyAddress);
     for (let i = 0; i < signers.length ; i++) {
-      await SHARES.connect(signers[i]).approve(brokerAddress, ethers.utils.parseEther("1000000"));
+      await SHARES.connect(signers[i]).approve(brokerAddress, ethers.utils.parseEther("100000000"));
       const allowance = await SHARES.allowance(signers[i].address, brokerAddress); 
       expect(allowance).to.not.be.equal(0);
     }
@@ -222,7 +222,7 @@ describe("Broker", function () {
     const brokerBalanceDaiBefore = await DAI.balanceOf(brokerAddress);
     const brokerBalanceSharesBefore = await shares.balanceOf(brokerAddress);
 
-    // Execute purchase and sell
+    // Execute purchase and sell  
     await broker.connect(signer1).sellForBaseCurrency(amountShares);
     
     // Balances after
@@ -243,11 +243,47 @@ describe("Broker", function () {
   });
 
   it("Should let owner withdraw Shares", async () => {
-    
+    const [deployer, owner, signer1] = await ethers.getSigners();
+    const shares = await ethers.getContractAt("Shares", shareAddress);
+    const broker = await ethers.getContractAt("Broker", brokerAddress);
+    const amountShares = BigNumber.from("50");
+
+    // Balances before
+    const OwnerBalanceSharesBefore = await shares.balanceOf(owner.address);
+    const brokerBalanceSharesBefore = await shares.balanceOf(brokerAddress);
+
+    //Execute withdraw
+    await broker.connect(owner).withdrawShares(amountShares, owner.address);
+
+    // Balances after
+    const OwnerBalanceSharesAfter = await shares.balanceOf(owner.address);
+    const brokerBalanceSharesAfter = await shares.balanceOf(brokerAddress);
+
+    // Check for sanity
+    expect(OwnerBalanceSharesBefore.add(amountShares)).to.be.equal(OwnerBalanceSharesAfter);
+    expect(brokerBalanceSharesBefore.sub(amountShares)).to.be.equal(brokerBalanceSharesAfter);
   });
 
   it("Should let owner withdraw DAI", async () => {
-    
+    const [deployer, owner, signer1] = await ethers.getSigners();
+    const DAI = await ethers.getContractAt("ERC20", currencyAddress);
+    const broker = await ethers.getContractAt("Broker", brokerAddress);
+    const amountDAI = await DAI.balanceOf(brokerAddress);
+
+    // Balances before
+    const OwnerBalanceDAIBefore = await DAI.balanceOf(owner.address);
+    const brokerBalanceDAIBefore = await DAI.balanceOf(brokerAddress);
+
+    //Execute withdraw
+    await broker.connect(owner).withdrawToken(currencyAddress, owner.address);
+
+    // Balances after
+    const OwnerBalanceDAIAfter = await DAI.balanceOf(owner.address);
+    const brokerBalanceDAIAfter = await DAI.balanceOf(brokerAddress);
+
+    // Check for sanity
+    expect(OwnerBalanceDAIBefore.add(amountDAI)).to.be.equal(OwnerBalanceDAIAfter);
+    expect(brokerBalanceDAIBefore.sub(amountDAI)).to.be.equal(brokerBalanceDAIAfter);
   });
 
   it("Should let owner withdraw ETH", async () => {
@@ -255,7 +291,26 @@ describe("Broker", function () {
   });
 
   it("Should let owner withdraw any ERC20 Token", async () => {
-    
+    //YOU CAN CHANGE ANY TOKEN WITH DAI TO TEST OTHER TOKENS
+    const [deployer, owner, signer1] = await ethers.getSigners();
+    const DAI = await ethers.getContractAt("ERC20", currencyAddress);
+    const broker = await ethers.getContractAt("Broker", brokerAddress);
+    const amountDAI = await DAI.balanceOf(brokerAddress);
+
+    // Balances before
+    const OwnerBalanceDAIBefore = await DAI.balanceOf(owner.address);
+    const brokerBalanceDAIBefore = await DAI.balanceOf(brokerAddress);
+
+    //Execute withdraw
+    await broker.connect(owner).withdrawToken(currencyAddress, owner.address);
+
+    // Balances after
+    const OwnerBalanceDAIAfter = await DAI.balanceOf(owner.address);
+    const brokerBalanceDAIAfter = await DAI.balanceOf(brokerAddress);
+
+    // Check for sanity
+    expect(OwnerBalanceDAIBefore.add(amountDAI)).to.be.equal(OwnerBalanceDAIAfter);
+    expect(brokerBalanceDAIBefore.sub(amountDAI)).to.be.equal(brokerBalanceDAIAfter);
   });
 
 });
