@@ -50,7 +50,7 @@ interface IBroker {
             - Converting ETH to baseCurrency over Uniswap while receiving the payment
             - Transferring shares from the Broker to the buyer.
      */
-    function buyWithETH(uint256 _amountShares) external;
+    function buyWithETH(uint256 _amountShares) external payable;
 
     /**
      * @dev Executes a trade for Shares <-> Any Token at the current price, 
@@ -85,7 +85,7 @@ interface IBroker {
             This scenario would only be possible if some ETH was accidentally sent to the contract.
             The Broker normally does not receive any ETH. It converts incoming ETH to baseCurrency automatically during purchases.
      */
-    function withdrawETH(address _recipient) external;
+    function withdrawETH(address _recipient) external payable;
 
     /**
      * @dev Allows owner to withdraw any token from the Broker to any address
