@@ -50,7 +50,7 @@ interface IBroker {
             - Converting ETH to baseCurrency over Uniswap while receiving the payment
             - Transferring shares from the Broker to the buyer.
      */
-    function buyWithETH(uint256 _amountShares) external;
+    function buyWithETH(uint256 _amountShares) external payable;
 
     /**
      * @dev Executes a trade for Shares <-> Any Token at the current price, 
@@ -58,7 +58,8 @@ interface IBroker {
             - Transferring shares from the Broker to the buyer.
             IT IS ASSUMED THAT THE BROKER HAS AN ALLOWANCE TO MOVE THE GIVEN TOKEN OF THE BUYER BEFORE THIS METHOD IS CALLED
      */
-    function buyWithToken(uint256 _amountShares, address _tokenAddress) external;
+    function buyWithToken(uint256 _amountShares, address _tokenAddress, uint256 _amountInMaximum) external;
+    function buyWithTokenPath(uint256 _amountShares, address _tokenAddress, bytes calldata _path, uint256 _amountInMaximum) external;
 
     /**
      * @dev Executes a trade for Shares <-> BaseCurrency at the current price, 
@@ -78,19 +79,24 @@ interface IBroker {
     /**
      * @dev Allows owner to withdraw shares from the Broker to any address
      */
-    function withdrawShares(uint256 _amountShares, address _recipient) external;
+    function withdrawShares(address _recipient, uint256 _amount) external;
+    
+    /**
+     * @dev Allows owner to withdraw base currency from the Broker to any address
+     */
+    function withdrawCurrency(address _recipient, uint256 _amount) external;
 
     /**
      * @dev Allows owner to withdraw Ether from the Broker to any address
             This scenario would only be possible if some ETH was accidentally sent to the contract.
             The Broker normally does not receive any ETH. It converts incoming ETH to baseCurrency automatically during purchases.
      */
-    function withdrawETH(address _recipient) external;
+    function withdrawETH(address _recipient, uint256 _amount) external;
 
     /**
      * @dev Allows owner to withdraw any token from the Broker to any address
             This scenario would only be possible if some tokens were accidentally sent to the contract.
             The Broker normally does not receive any tokens. It converts incoming tokens to baseCurrency automatically during purchases.
      */
-    function withdrawToken(address _token, address _recipient) external;
+    function withdrawToken(address _token, address _recipient, uint256 _amount) external;
 }
