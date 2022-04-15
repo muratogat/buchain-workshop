@@ -17,6 +17,9 @@ contract Broker is IBroker, Ownable {
     IQuoter private immutable uniswapQuoter = IQuoter(0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6);
     ISwapRouter private immutable uniswapRouter = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
     uint24 private constant UNISWAP_POOL_FEE_TIER = 3000;
+    
+    event SharesBought(IERC20 indexed token, address who, uint256 amount, uint256 totPrice);
+    event SharesSold(IERC20 indexed token, address who, uint256 amount, uint256 totPrice);
 
     constructor(IERC20 _shares, uint256 _price, IERC20 _currency, address _owner) Ownable(_owner) {
         shares = _shares;
@@ -58,6 +61,8 @@ contract Broker is IBroker, Ownable {
         uint256 totalPrice = getPrice(_amountShares);
         currency.transferFrom(msg.sender, address(this), totalPrice);
         shares.transfer(msg.sender, _amountShares);
+
+        emit SharesBought(shares, address(msg.sender), _amountShares, totalPrice);
     }
 
     function buyWithETH(uint256 _amountShares) external payable {
@@ -85,6 +90,8 @@ contract Broker is IBroker, Ownable {
         }
 
         shares.transfer(msg.sender, _amountShares);
+
+        emit SharesBought(shares, address(msg.sender), _amountShares, totalPriceBase);
     }
 
     function buyWithToken(uint256 _amountShares, address _tokenAddress, uint256 _amountInMaximum) external {
@@ -110,6 +117,8 @@ contract Broker is IBroker, Ownable {
         }
 
         shares.transfer(msg.sender, _amountShares);
+
+        emit SharesBought(shares, address(msg.sender), _amountShares, totalPriceBase);
     }
 
     function buyWithTokenPath(uint256 _amountShares, address _tokenAddress, bytes calldata path, uint256 _amountInMaximum) external {
@@ -139,12 +148,16 @@ contract Broker is IBroker, Ownable {
         }
 
         shares.transfer(msg.sender, _amountShares);
+
+        emit SharesBought(shares, address(msg.sender), _amountShares, totalPriceBase);
     }
 
     function sellForBaseCurrency(uint256 _amountShares) external {
         uint256 totalPrice = getPrice(_amountShares);
         shares.transferFrom(msg.sender, address(this), _amountShares);
         currency.transfer(msg.sender, totalPrice);
+
+        emit SharesSold(shares, address(msg.sender), _amountShares, totalPrice);
     }
 
     function sellForWETH(uint256 _amountShares) external {
@@ -165,6 +178,8 @@ contract Broker is IBroker, Ownable {
         
         currency.approve(address(uniswapRouter), totalPriceBase);
         uniswapRouter.exactInputSingle(params);
+
+        emit SharesSold(shares, address(msg.sender), _amountShares, totalPriceBase);
     }
 
     function withdrawShares(address _recipient, uint256 _amount) external onlyOwner {
